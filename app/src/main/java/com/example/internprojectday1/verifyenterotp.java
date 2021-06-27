@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,7 +44,7 @@ public class verifyenterotp extends AppCompatActivity {
         setContentView(R.layout.activity_verifyenterotp);
 
         reff= FirebaseDatabase.getInstance().getReference();
-        final Button verifybuttonclick= findViewById(R.id.buttongetotp);
+        final Button verifybuttonclick= findViewById(R.id.buttonverifyotp);
 
         inputnumber1=findViewById(R.id.inputotp1);
         inputnumber2=findViewById(R.id.inputotp2);
@@ -90,16 +89,19 @@ public class verifyenterotp extends AppCompatActivity {
 
                                         if(task.isSuccessful()){
 
-                                            String number=getIntent().getStringExtra("mobile");
-                                            Toast.makeText(verifyenterotp.this, "OTP verified", Toast.LENGTH_SHORT).show();
-                                            Query query= reff.child("employees").orderByChild("mobile").equalTo(number);
-                                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                String number=getIntent().getStringExtra("mobile");
+                                                Toast.makeText(verifyenterotp.this, "OTP verified", Toast.LENGTH_SHORT).show();
+                                                Query query= reff.child("employees").orderByChild("mobile").equalTo(number);
+                                                query.addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
 
-                                                    Intent intent= new Intent(getApplicationContext(),TaskList.class);
-                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                    startActivity(intent);
+                                                    for(DataSnapshot postSnapshot:snapshot.getChildren()) {
+                                                            Intent intent = new Intent(getApplicationContext(), TaskList.class);
+                                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                            startActivity(intent);
+
+                                                    }
                                                 }
 
                                                 @Override
@@ -107,11 +109,11 @@ public class verifyenterotp extends AppCompatActivity {
 
                                                 }
                                             });
-
                                             Toast.makeText(verifyenterotp.this, "Register activity", Toast.LENGTH_SHORT).show();
-                                            Intent intent= new Intent(verifyenterotp.this,RegisterActivity.class);
+                                            Intent intent= new Intent(verifyenterotp.this,EmployeeRegistration.class);
                                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                             startActivity(intent);
+
                                         }else{
                                             Toast.makeText(verifyenterotp.this, "Enter the correct OTP", Toast.LENGTH_SHORT).show();
                                         }
